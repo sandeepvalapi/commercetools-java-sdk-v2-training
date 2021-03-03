@@ -27,9 +27,9 @@ public class CustomerService {
     public CompletableFuture<ApiHttpResponse<Customer>> getCustomerByKey(String customerKey) {
         return
                 apiRoot.withProjectKey(projectKey)
-                .customers()
-                .withKey(customerKey)
-                .get().execute();
+                        .customers()
+                        .withKey(customerKey)
+                        .get().execute();
     }
 
     public CompletableFuture<ApiHttpResponse<CustomerSignInResult>> createCustomer(
@@ -67,10 +67,10 @@ public class CustomerService {
             final long timeToLiveInMinutes
     ) {
 
-        final Customer customer =  customerApiHttpResponse.getBody();
+        final Customer customer = customerApiHttpResponse.getBody();
         return apiRoot.withProjectKey(projectKey).customers().emailToken().post(
                 CustomerCreateEmailTokenBuilder.of().id(customer.getId())
-                .ttlMinutes(timeToLiveInMinutes).build()
+                        .ttlMinutes(timeToLiveInMinutes).build()
         ).execute();
 
     }
@@ -86,7 +86,7 @@ public class CustomerService {
                                 CustomerCreateEmailTokenBuilder.of()
                                         .id(customer.getId())
                                         .ttlMinutes(timeToLiveInMinutes)
-                                .build()
+                                        .build()
                         )
                         .execute();
     }
@@ -96,9 +96,14 @@ public class CustomerService {
         CustomerToken customerToken = customerTokenApiHttpResponse.getBody();
         return
                 apiRoot.withProjectKey(projectKey)
-                .customers().emailConfirm().post(
-                        CustomerEmailVerifyBuilder.of().tokenValue(customerToken.getValue()).build()
-                ).execute();
+                        .customers()
+                        .emailConfirm()
+                        .post(
+                                CustomerEmailVerifyBuilder.of().
+                                        tokenValue(customerToken
+                                                .getValue())
+                                        .build()
+                        ).execute();
     }
 
     public CompletableFuture<ApiHttpResponse<JsonNode>> verifyEmail(final CustomerToken customerToken) {
@@ -110,10 +115,10 @@ public class CustomerService {
                         .customers()
                         .emailConfirm()
                         .post(
-                               CustomerEmailVerifyBuilder.of()
-                                    .tokenValue(customerToken.getValue())
-                                    .build()
-                                )
+                                CustomerEmailVerifyBuilder.of()
+                                        .tokenValue(customerToken.getValue())
+                                        .build()
+                        )
                         .execute();
     }
 
@@ -131,7 +136,7 @@ public class CustomerService {
             final ApiHttpResponse<Customer> customerApiHttpResponse,
             final ApiHttpResponse<CustomerGroup> customerGroupApiHttpResponse) {
 
-        final Customer customer= customerApiHttpResponse.getBody();
+        final Customer customer = customerApiHttpResponse.getBody();
         final CustomerGroup customerGroup = customerGroupApiHttpResponse.getBody();
 
         //logging
@@ -145,11 +150,11 @@ public class CustomerService {
                                 .version(customer.getVersion())
                                 .actions(
                                         Arrays.asList(
-                                            CustomerSetCustomerGroupActionBuilder.of()
-                                                .customerGroup(CustomerGroupResourceIdentifierBuilder.of()
-                                                        .key(customerGroup.getKey())
-                                                        .build())
-                                                .build()
+                                                CustomerSetCustomerGroupActionBuilder.of()
+                                                        .customerGroup(CustomerGroupResourceIdentifierBuilder.of()
+                                                                .key(customerGroup.getKey())
+                                                                .build())
+                                                        .build()
                                         )
                                 )
                                 .build())

@@ -17,10 +17,10 @@ import static handson.impl.ClientService.getProjectKey;
 
 /**
  * Configure sphere client and get project information.
- *
+ * <p>
  * See:
- *  TODO dev.properties
- *  TODO {@link ClientService#createApiClient(String prefix)}
+ * TODO dev.properties
+ * TODO {@link ClientService#createApiClient(String prefix)}
  */
 public class Task02a_CREATE {
 
@@ -61,27 +61,22 @@ public class Task02a_CREATE {
 //                            .getId());
 
             //Verify Customer
-
             //GET the customer
-
             //Create a token
-
             //Send him the token
-
-
             //Update the customer
 
 
             logger.info("Verify Customer " + customerService.getCustomerByKey("sandeeptestcom")
-            .thenComposeAsync(customerApiHttpResponse -> customerService.createEmailVerificationToken(
-                    customerApiHttpResponse, 90
-            ))
-            //Lets think email is sent and customer clicks the link
+                    .thenComposeAsync(customerApiHttpResponse ->
+                            customerService.createEmailVerificationToken(customerApiHttpResponse, 90))
+                    //Lets think email is sent and customer clicks the link
                     .thenComposeAsync(customerService::verifyEmail)
-                    .toCompletableFuture().get().getBody().toPrettyString()
+                    .toCompletableFuture()
+                    .get()
+                    .getBody()
+                    .toPrettyString()
             );
-
-
         }
     }
 }

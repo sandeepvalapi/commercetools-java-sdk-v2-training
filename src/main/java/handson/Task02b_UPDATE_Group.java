@@ -17,10 +17,10 @@ import static handson.impl.ClientService.getProjectKey;
 
 /**
  * Configure sphere client and get project information.
- *
+ * <p>
  * See:
- *  TODO dev.properties
- *  TODO {@link ClientService#createApiClient(String prefix)}
+ * TODO dev.properties
+ * TODO {@link ClientService#createApiClient(String prefix)}
  */
 public class Task02b_UPDATE_Group {
 
@@ -40,10 +40,13 @@ public class Task02b_UPDATE_Group {
             logger.info("Customer assigned to group: " +
                     customerService.getCustomerByKey("sandeeptestcom")
                             .thenCombineAsync(
-                                    customerService.getCustomerGroupByKey("indoor-customer-group"),
+                                    customerService.getCustomerGroupByKey("indoor-outdoor-customer-group"),
                                     customerService::assignCustomerToCustomerGroup
                             ).thenComposeAsync(CompletableFuture::toCompletableFuture)
-                            .toCompletableFuture().get().getBody().getKey()
+                            .toCompletableFuture()
+                            .get()
+                            .getBody()
+                            .getKey()
             );
         }
     }
