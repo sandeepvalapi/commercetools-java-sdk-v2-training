@@ -26,7 +26,10 @@ public class CustomerService {
 
     public CompletableFuture<ApiHttpResponse<Customer>> getCustomerByKey(String customerKey) {
         return
-                null;
+                apiRoot.withProjectKey(projectKey)
+                .customers()
+                .withKey(customerKey)
+                .get().execute();
     }
 
     public CompletableFuture<ApiHttpResponse<CustomerSignInResult>> createCustomer(
@@ -60,12 +63,16 @@ public class CustomerService {
     }
 
     public CompletableFuture<ApiHttpResponse<CustomerToken>> createEmailVerificationToken(
-            final ApiHttpResponse<CustomerSignInResult> customerSignInResultApiHttpResponse,
+            final ApiHttpResponse<Customer> customerApiHttpResponse,
             final long timeToLiveInMinutes
     ) {
 
-        return
-                null;
+        final Customer customer =  customerApiHttpResponse.getBody();
+        return apiRoot.withProjectKey(projectKey).customers().emailToken().post(
+                CustomerCreateEmailTokenBuilder.of().id(customer.getId())
+                .ttlMinutes(timeToLiveInMinutes).build()
+        ).execute();
+
     }
 
     public CompletableFuture<ApiHttpResponse<CustomerToken>> createEmailVerificationToken(final Customer customer, final long timeToLiveInMinutes) {
@@ -86,8 +93,12 @@ public class CustomerService {
 
     public CompletableFuture<ApiHttpResponse<JsonNode>> verifyEmail(final ApiHttpResponse<CustomerToken> customerTokenApiHttpResponse) {
 
+        CustomerToken customerToken = customerTokenApiHttpResponse.getBody();
         return
-                null;
+                apiRoot.withProjectKey(projectKey)
+                .customers().emailConfirm().post(
+                        CustomerEmailVerifyBuilder.of().tokenValue(customerToken.getValue()).build()
+                ).execute();
     }
 
     public CompletableFuture<ApiHttpResponse<JsonNode>> verifyEmail(final CustomerToken customerToken) {
@@ -116,7 +127,15 @@ public class CustomerService {
                         .execute();
     }
 
-    public CompletableFuture<ApiHttpResponse<Customer>> assignCustomerToCustomerGroup(Customer customer, CustomerGroup customerGroup) {
+    public CompletableFuture<ApiHttpResponse<Customer>> assignCustomerToCustomerGroup(
+            final ApiHttpResponse<Customer> customerApiHttpResponse,
+            final ApiHttpResponse<CustomerGroup> customerGroupApiHttpResponse) {
+
+        final Customer customer= customerApiHttpResponse.getBody();
+        final CustomerGroup customerGroup = customerGroupApiHttpResponse.getBody();
+
+        //logging
+
         return
                 apiRoot
                         .withProjectKey(projectKey)

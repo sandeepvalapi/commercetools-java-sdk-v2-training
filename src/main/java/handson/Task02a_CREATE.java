@@ -46,19 +46,42 @@ public class Task02a_CREATE {
             //  CREATE a email verification token
             //  Verify customer
             //
-            logger.info("Customer created: " +
-                    customerService.createCustomer(
-                            "svalapi@deloitte.com",
-                            "12345",
-                            "sandeeptestcom",
-                            "Sandeep",
-                            "Valapi",
-                            "IN"
-                    ).toCompletableFuture()
-                            .get()
-                            .getBody()
-                            .getCustomer()
-                            .getId());
+//            logger.info("Customer created: " +
+//                    customerService.createCustomer(
+//                            "svalapi@deloitte.com",
+//                            "12345",
+//                            "sandeeptestcom",
+//                            "Sandeep",
+//                            "Valapi",
+//                            "IN"
+//                    ).toCompletableFuture()
+//                            .get()
+//                            .getBody()
+//                            .getCustomer()
+//                            .getId());
+
+            //Verify Customer
+
+            //GET the customer
+
+            //Create a token
+
+            //Send him the token
+
+
+            //Update the customer
+
+
+            logger.info("Verify Customer " + customerService.getCustomerByKey("sandeeptestcom")
+            .thenComposeAsync(customerApiHttpResponse -> customerService.createEmailVerificationToken(
+                    customerApiHttpResponse, 90
+            ))
+            //Lets think email is sent and customer clicks the link
+                    .thenComposeAsync(customerService::verifyEmail)
+                    .toCompletableFuture().get().getBody().toPrettyString()
+            );
+
+
         }
     }
 }

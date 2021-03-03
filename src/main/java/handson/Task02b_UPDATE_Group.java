@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static handson.impl.ClientService.createApiClient;
@@ -37,7 +38,12 @@ public class Task02b_UPDATE_Group {
             //  ASSIGN the customer to the customer group
             //
             logger.info("Customer assigned to group: " +
-                    ""
+                    customerService.getCustomerByKey("sandeeptestcom")
+                            .thenCombineAsync(
+                                    customerService.getCustomerGroupByKey("indoor-customer-group"),
+                                    customerService::assignCustomerToCustomerGroup
+                            ).thenComposeAsync(CompletableFuture::toCompletableFuture)
+                            .toCompletableFuture().get().getBody().getKey()
             );
         }
     }
