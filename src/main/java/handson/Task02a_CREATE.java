@@ -47,11 +47,18 @@ public class Task02a_CREATE {
             //  Verify customer
             //
             logger.info("Customer created: " +
-                    ""
-            );
-
-
+                    customerService.createCustomer(
+                            "svalapi@deloitte.com",
+                            "12345",
+                            "sandeeptestcom",
+                            "Sandeep",
+                            "Valapi",
+                            "IN"
+                    ).toCompletableFuture()
+                            .get()
+                            .getBody()
+                            .getCustomer()
+                            .getId());
         }
-
     }
 }

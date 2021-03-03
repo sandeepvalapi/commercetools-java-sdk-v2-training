@@ -4,23 +4,20 @@ import com.commercetools.api.client.ApiRoot;
 import com.commercetools.api.defaultconfig.ApiFactory;
 import com.commercetools.api.defaultconfig.ServiceRegion;
 import com.commercetools.importapi.defaultconfig.ImportApiFactory;
-import com.commercetools.ml.defaultconfig.MLApiRootFactory;
 import io.vrap.rmf.base.client.ApiHttpClient;
-
 import io.vrap.rmf.base.client.AuthenticationToken;
-import io.vrap.rmf.base.client.VrapHttpClient;
 import io.vrap.rmf.base.client.oauth2.*;
 import io.vrap.rmf.okhttp.VrapOkHttpClient;
 
 import java.io.IOException;
 import java.util.Properties;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class ClientService {
 
-    public static ApiHttpClient apiHttpClient;
+    public static ApiHttpClient     apiHttpClient;
     public static ApiHttpClient importHttpClient;
+    public static String filePath = "/dev.properties";
 
     // TODO: Add the Constant-Token Client
 
@@ -29,21 +26,32 @@ public class ClientService {
      */
     public static ApiRoot createApiClient(final String prefix) throws IOException {
 
-        apiHttpClient = null;
+        apiHttpClient = ApiFactory.defaultClient(ClientCredentials.of()
+                        .withClientId(getClientId(prefix))
+                        .withClientSecret(getClientSecret(prefix))
+                        .build(), ServiceRegion.GCP_EUROPE_WEST1.getOAuthTokenUrl(),
+                ServiceRegion.GCP_EUROPE_WEST1.getApiUrl());
 
         return ApiFactory.create(() -> apiHttpClient);
     }
 
     public static String getProjectKey(final String prefix) throws IOException {
-        return "";
+        final Properties properties = new Properties();
+        properties.load(ClientService.class.getResourceAsStream(filePath));
+        return properties.getProperty(prefix + "projectKey");
     }
 
     public static String getClientId(final String prefix) throws IOException {
-        return "";
+        final Properties properties = new Properties();
+        properties.load(ClientService.class.getResourceAsStream("/dev.properties"));
+        return properties.getProperty(prefix + "clientId");
     }
 
+
     public static String getClientSecret(final String prefix) throws IOException {
-        return "";
+        final Properties properties = new Properties();
+        properties.load(ClientService.class.getResourceAsStream("/dev.properties"));
+        return properties.getProperty(prefix + "clientSecret");
     }
 
     public static String getStoreKey(final String prefix) throws IOException {
