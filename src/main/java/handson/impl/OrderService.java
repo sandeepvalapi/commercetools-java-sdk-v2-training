@@ -25,14 +25,14 @@ public class OrderService {
 
     public CompletableFuture<ApiHttpResponse<Order>> createOrder(final ApiHttpResponse<Cart> cartApiHttpResponse) {
 
-           final Cart cart = cartApiHttpResponse.getBody();
-            return apiRoot.withProjectKey(projectKey
-            ).orders().post(
-                    OrderFromCartDraftBuilder.of()
-                    .version(cart.getVersion())
-                    .id(cart.getId())
-                    .build()
-            ).execute();
+        final Cart cart = cartApiHttpResponse.getBody();
+        return apiRoot.withProjectKey(projectKey
+        ).orders().post(
+                OrderFromCartDraftBuilder.of()
+                        .version(cart.getVersion())
+                        .id(cart.getId())
+                        .build()
+        ).execute();
     }
 
 
@@ -40,7 +40,7 @@ public class OrderService {
             final ApiHttpResponse<Order> orderApiHttpResponse,
             final OrderState state) {
 
-       return null;
+        return null;
     }
 
 
@@ -48,7 +48,28 @@ public class OrderService {
             final ApiHttpResponse<Order> orderApiHttpResponse,
             final State workflowState) {
 
-        return null;
+        final Order order = orderApiHttpResponse.getBody();
+
+        return apiRoot.withProjectKey(projectKey)
+                .orders()
+                .withId(order.getId())
+                .post(
+                        OrderUpdateBuilder.of()
+                                .version(order.getVersion())
+                                .actions(
+                                        Arrays.asList(
+                                                OrderTransitionStateActionBuilder.of()
+                                                        .state(StateResourceIdentifierBuilder.of()
+                                                                .key(workflowState.getKey())
+                                                                .build()
+                                                        )
+                                                        .build()
+                                        )
+                                )
+                                .build()
+                )
+                .execute();
+
     }
 
 }

@@ -41,17 +41,25 @@ public class Task04b_CHECKOUT {
 
             // TODO: Fetch a channel if your inventory mode will not be NONE
             //
-            Channel channel = client.withProjectKey(projectKey)
-                    .channels()
-                    .get()
-                    .withWhere("key=" + "\"" + "sv-india-inventory" + "\"")
-                    .execute()
-                    .toCompletableFuture().get()
-                    .getBody()
-                    .getResults()
-                    .get(0);
+            Channel channel =
+                    client.withProjectKey(projectKey)
+                            .channels()
+                            .get()
+                            .withWhere("key=" + "\"" + "sv-india-inventory" + "\"")
+                            .execute()
+                            .toCompletableFuture().get()
+                            .getBody()
+                            .getResults()
+                            .get(0);
 
-            final State state = null;
+            final State state =
+                    client.withProjectKey(projectKey)
+                            .states()
+                            .withKey("OrderPacked")
+                            .get().execute()
+                            .toCompletableFuture()
+                            .get()
+                            .getBody();
 
 
             // TODO: Perform cart operations:
@@ -70,7 +78,7 @@ public class Task04b_CHECKOUT {
                             .thenComposeAsync(cartApiHttpResponse -> cartService.addProductToCartBySkusAndChannel(
                                     cartApiHttpResponse,
                                     channel,
-                                    "sv-varient1", "sv-varient1"
+                                    "sv-varient1", "sv-varient1","sv-varient1"
                                     )
                             )
                             .thenComposeAsync(cartApiHttpResponse ->
@@ -84,6 +92,11 @@ public class Task04b_CHECKOUT {
                                     )
                             )
                             .thenComposeAsync(orderService::createOrder)
+                            .thenComposeAsync(orderApiHttpResponse ->
+                                    orderService.changeWorkflowState(
+                                            orderApiHttpResponse,
+                                            state
+                                    ))
                             .toCompletableFuture().get().getBody().getId()
 
             );
