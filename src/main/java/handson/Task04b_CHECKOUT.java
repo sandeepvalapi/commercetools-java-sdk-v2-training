@@ -2,7 +2,6 @@ package handson;
 
 import com.commercetools.api.client.ApiRoot;
 import com.commercetools.api.models.channel.Channel;
-import com.commercetools.api.models.order.OrderState;
 import com.commercetools.api.models.state.State;
 import handson.impl.*;
 import io.vrap.rmf.base.client.ApiHttpClient;
@@ -18,7 +17,7 @@ import static handson.impl.ClientService.getProjectKey;
 
 /**
  * Create a cart for a customer, add a product to it, create an order from the cart and change the order state.
- *
+ * <p>
  * See:
  */
 public class Task04b_CHECKOUT {
@@ -42,7 +41,15 @@ public class Task04b_CHECKOUT {
 
             // TODO: Fetch a channel if your inventory mode will not be NONE
             //
-            Channel channel = null;
+            Channel channel = client.withProjectKey(projectKey)
+                    .channels()
+                    .get()
+                    .withWhere("key=" + "\"" + "sv-india-inventory" + "\"")
+                    .execute()
+                    .toCompletableFuture().get()
+                    .getBody()
+                    .getResults()
+                    .get(0);
 
             final State state = null;
 
@@ -59,13 +66,25 @@ public class Task04b_CHECKOUT {
             //
             logger.info("Created cart/order ID: " +
                     customerService.getCustomerByKey("sandeeptestcom")
-                    .thenComposeAsync(cartService::createCart)
+                            .thenComposeAsync(cartService::createCart)
+                            .thenComposeAsync(cartApiHttpResponse -> cartService.addProductToCartBySkusAndChannel(
+                                    cartApiHttpResponse,
+                                    channel,
+                                    "sv-varient1", "sv-varient1"
+                                    )
+                            )
+                            .thenComposeAsync(cartApiHttpResponse ->
+                                    paymentService.createPaymentAndAddToCart(
+                                            cartApiHttpResponse,
+                                            "SuperPay",
+                                            "Credit Card",
+                                            "paysuper92" + Math.random(),
+                                            "payuser992923" + Math.random()
 
-
-
-
-
-                    .toCompletableFuture().get().getBody().getId()
+                                    )
+                            )
+                            .thenComposeAsync(orderService::createOrder)
+                            .toCompletableFuture().get().getBody().getId()
 
             );
         }

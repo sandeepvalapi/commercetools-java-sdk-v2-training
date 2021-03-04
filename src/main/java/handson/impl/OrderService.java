@@ -25,7 +25,14 @@ public class OrderService {
 
     public CompletableFuture<ApiHttpResponse<Order>> createOrder(final ApiHttpResponse<Cart> cartApiHttpResponse) {
 
-        return null;
+           final Cart cart = cartApiHttpResponse.getBody();
+            return apiRoot.withProjectKey(projectKey
+            ).orders().post(
+                    OrderFromCartDraftBuilder.of()
+                    .version(cart.getVersion())
+                    .id(cart.getId())
+                    .build()
+            ).execute();
     }
 
 

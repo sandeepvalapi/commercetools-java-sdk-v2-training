@@ -1,17 +1,19 @@
 package handson.impl;
 
 import com.commercetools.api.client.ApiRoot;
-import com.commercetools.api.models.cart.Cart;
-import com.commercetools.api.models.cart.CartDraftBuilder;
-import com.commercetools.api.models.cart.InventoryMode;
+import com.commercetools.api.models.cart.*;
 import com.commercetools.api.models.channel.Channel;
+import com.commercetools.api.models.channel.ChannelResourceIdentifierBuilder;
 import com.commercetools.api.models.customer.Customer;
 import io.vrap.rmf.base.client.ApiHttpResponse;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
-
+ *
  */
 public class CartService {
 
@@ -22,7 +24,6 @@ public class CartService {
         this.apiRoot = client;
         this.projectKey = projectKey;
     }
-
 
 
     /**
@@ -84,9 +85,32 @@ public class CartService {
     public CompletableFuture<ApiHttpResponse<Cart>> addProductToCartBySkusAndChannel(
             final ApiHttpResponse<Cart> cartApiHttpResponse,
             final Channel channel,
-            final String ... skus) {
+            final String... skus) {
 
-        return null;
+        Cart cart = cartApiHttpResponse.getBody();
+        List<CartUpdateAction> cartUpdateActions = Stream.of(skus)
+                .map(sku -> CartAddLineItemActionBuilder.of()
+                        .sku(sku)
+                        .quantity(1L)
+                        .supplyChannel(
+                                ChannelResourceIdentifierBuilder.of()
+                                        .id(channel.getId())
+                                        .build()
+                        ).build()
+                ).collect(Collectors.toList());
+
+        return apiRoot.withProjectKey(projectKey)
+                .carts()
+                .withId(cart.getId())
+                .post(
+                        CartUpdateBuilder.of()
+                                .version(cart.getVersion())
+                                .actions(
+                                        //Want list of cart update actions
+                                        cartUpdateActions
+                                )
+                                .build()
+                ).execute();
     }
 
     public CompletableFuture<ApiHttpResponse<Cart>> addDiscountToCart(
@@ -104,7 +128,6 @@ public class CartService {
 
         return null;
     }
-
 
 
 }
