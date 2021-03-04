@@ -1,19 +1,14 @@
 package handson.impl;
 
 import com.commercetools.api.client.ApiRoot;
-import com.commercetools.api.models.cart.*;
+import com.commercetools.api.models.cart.Cart;
+import com.commercetools.api.models.cart.CartDraftBuilder;
+import com.commercetools.api.models.cart.InventoryMode;
 import com.commercetools.api.models.channel.Channel;
-import com.commercetools.api.models.channel.ChannelResourceIdentifierBuilder;
 import com.commercetools.api.models.customer.Customer;
-import com.commercetools.api.models.shipping_method.ShippingMethod;
-import com.commercetools.api.models.shipping_method.ShippingMethodResourceIdentifierBuilder;
 import io.vrap.rmf.base.client.ApiHttpResponse;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
 
@@ -37,8 +32,34 @@ public class CartService {
      */
     public CompletableFuture<ApiHttpResponse<Cart>> createCart(final ApiHttpResponse<Customer> customerApiHttpResponse) {
 
-        return
-                null;
+        Customer customer = customerApiHttpResponse.getBody();
+        return apiRoot.withProjectKey(projectKey)
+                .carts()
+                .post(
+                        CartDraftBuilder.of()
+                                .currency("INR")
+                                .inventoryMode(InventoryMode.TRACK_ONLY)
+                                .customerEmail(customer.getEmail())
+                                .customerId(customer.getId())
+                                .deleteDaysAfterLastModification(90L)
+                                .shippingAddress(
+                                        customer
+                                                .getAddresses()
+                                                .stream()
+                                                .filter(a -> a.getId().equals(customer.getDefaultShippingAddressId()))
+                                                .findFirst()
+                                                .get()
+                                )
+                                .country(
+                                        customer
+                                                .getAddresses()
+                                                .stream()
+                                                .filter(a -> a.getId().equals(customer.getDefaultShippingAddressId()))
+                                                .findFirst()
+                                                .get()
+                                                .getCountry())
+                                .build()
+                ).execute();
     }
 
 

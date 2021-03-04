@@ -12,9 +12,7 @@ import com.commercetools.importapi.models.importsinks.ImportSink;
 import com.commercetools.importapi.models.importsinks.ImportSinkDraftBuilder;
 import com.commercetools.importapi.models.prices.PriceImportBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vrap.rmf.base.client.ApiHttpResponse;
-
 
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
@@ -54,13 +52,35 @@ public class ImportService {
             final String productVariantKey,
             final Money amount) throws JsonProcessingException {
 
+        PriceImportRequest priceImportRequest = PriceImportRequestBuilder.of()
+                .resources(
+                        Arrays.asList(
+                                PriceImportBuilder.of()
+                                        .key("PriceImportOn" + productVariantKey)
+                                        .country("IN")
+                                        .product(
+                                                ProductKeyReferenceBuilder.of()
+                                                        .key(productKey)
+                                                        .build()
+                                        )
+                                        .productVariant(
+                                                ProductVariantKeyReferenceBuilder.of()
+                                                        .key(productVariantKey)
+                                                        .build()
+                                        )
+                                        .value(amount)
+                                        .build()
+                        )
+                )
+                .build();
 
-            return
-                    null;
+        return
+                apiRoot.withProjectKeyValue(projectKey)
+                        .prices()
+                        .importSinkKeyWithImportSinkKeyValue(sinkKey)
+                        .post(
+                                priceImportRequest
+                        ).execute();
     }
-
-
-
-
 
 }

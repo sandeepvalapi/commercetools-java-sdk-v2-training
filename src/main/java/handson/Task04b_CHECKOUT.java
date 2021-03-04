@@ -58,7 +58,15 @@ public class Task04b_CHECKOUT {
             // TODO additionally: add custom line items, add shipping method
             //
             logger.info("Created cart/order ID: " +
-                    ""
+                    customerService.getCustomerByKey("sandeeptestcom")
+                    .thenComposeAsync(cartService::createCart)
+
+
+
+
+
+                    .toCompletableFuture().get().getBody().getId()
+
             );
         }
 
