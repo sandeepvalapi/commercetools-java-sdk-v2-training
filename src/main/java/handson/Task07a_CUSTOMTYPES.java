@@ -36,14 +36,15 @@ public class Task07a_CUSTOMTYPES {
 
             Map<String, String> namesForFieldCheck = new HashMap<String, String>() {
                 {
-                    put("DE", "plantCheck");
-                    put("EN", "plantCheck");
+                    put("DE", "svplantCheck");
+                    put("EN", "svplantCheck");
                 }
             };
             Map<String, String> namesForFieldComments = new HashMap<String, String>() {
                 {
-                    put("DE", "comments");
-                    put("EN", "Bemerkungen");
+                    put("DE", "svcomments");
+                    put("EN", "svBemerkungen");
+
                 }
             };
 
@@ -73,15 +74,35 @@ public class Task07a_CUSTOMTYPES {
 
             Map<String, String> namesForType = new HashMap<String, String>() {
                 {
-                    put("DE", "customerPlantChecker");
-                    put("EN", "customerPlantChecker");
+                    put("DE", "svcustomerPlantChecker");
+                    put("EN", "svcustomerPlantChecker");
                 }
             };
 
             logger.info("Custom Type info: " +
-                    " "
-            );
-        }
+                    client.withProjectKey(projectKey)
+                            .types()
+                            .post(
+                                    TypeDraftBuilder.of()
+                                            .key("SVcustomerPlantCheckExtension")
+                                            .name(
+                                                    LocalizedStringBuilder.of()
+                                                            .values(namesForType)
+                                                            .build()
+                                            )
+                                            .resourceTypeIds(
+                                                    Arrays.asList(
+                                                            ResourceTypeId.CUSTOMER
+                                                    )
+                                            )
+                                            .fieldDefinitions(
+                                                    definitions
+                                            )
 
+                                            .build()
+
+                            ).execute().toCompletableFuture().get().getBody().getId());
+        }
     }
 }
+

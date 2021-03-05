@@ -168,13 +168,15 @@ public class Task09b_SPHERECLIENT_LOGGING {
                 ServiceRegion.GCP_EUROPE_WEST1.getOAuthTokenUrl(),
                 ServiceRegion.GCP_EUROPE_WEST1.getApiUrl(),
                 new ArrayList<>(Collections.singletonList(
-                        new RetryMiddleware(3, Arrays.asList(500, 503))
+                        new RetryMiddleware(3, Arrays.asList(500, 503, 404))
                 ))
         )) {
             ApiRoot retryClient = create(() -> retryHttpClient);
             logger.info("Get project information via retryClient " +
                     retryClient
                             .withProjectKey(projectKey)
+                            .customers()
+                            .withKey("customers with dsd")
                             .get()
                             .execute()
                             .toCompletableFuture().get()

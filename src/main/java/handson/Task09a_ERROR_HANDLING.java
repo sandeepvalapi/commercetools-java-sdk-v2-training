@@ -1,7 +1,9 @@
 package handson;
 
 import com.commercetools.api.client.ApiRoot;
+import com.commercetools.api.models.api_client.ApiClientPagedQueryResponseBuilder;
 import com.commercetools.api.models.customer.Customer;
+import com.commercetools.api.models.customer.CustomerBuilder;
 import handson.impl.ApiPrefixHelper;
 import handson.impl.ClientService;
 import handson.impl.CustomerService;
@@ -35,13 +37,24 @@ public class Task09a_ERROR_HANDLING {
             // TODO:
             //  Provide a WRONG or CORRECT customer key
             //
-            final String customerKeyMayOrMayNotExist = "customer-michele-WRONG-KEY";
+            final String customerKeyMayOrMayNotExist = "dasdasdasdasdd";
 
             // TODO: Handle 4XX errors, exceptions
             //  Use CompletionStage
             //
             logger.info("Customer fetch: " +
-                    " "
+                    client.withProjectKey(projectKey)
+                    .customers().withKey(customerKeyMayOrMayNotExist).get()
+                    .execute()
+                    .exceptionally(
+                            throwable -> {
+                                logger.info(throwable.getLocalizedMessage());
+                                return
+                                       null;
+
+                            }
+                    )
+                    .toCompletableFuture().get().getBody().get()
             );
 
 
@@ -57,7 +70,12 @@ public class Task09a_ERROR_HANDLING {
             );
 
             // Handle now
-
+            if(!optionalCustomer.isPresent()){
+                logger.info("customer is not present");
+            }
+            if(optionalCustomer.isPresent()){
+                logger.info("customer is present");
+            }
 
         }
     }

@@ -41,13 +41,13 @@ public class Task08a_SUBSCRIPTION {
                             .subscriptions()
                             .post(
                                     SubscriptionDraftBuilder.of()
-                                            .key("mhCustomerChangeSubscription")
+                                            .key("svCustomerChangeSubscription1")
                                             .destination(
                                                     SqsDestinationBuilder.of()
-                                                            .queueUrl("")
-                                                            .region("eu-central-1")
-                                                            .accessKey("")
-                                                            .accessSecret("")
+                                                            .queueUrl("https://sqs.us-east-1.amazonaws.com/073961568415/happy-garden-303-customerinfo")
+                                                            .region("us-east-1")
+                                                            .accessKey("AKIAI6NIXW7LRU56TYNA")
+                                                            .accessSecret("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")
                                                             .build()
                                             )
                                             .changes(
