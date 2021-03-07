@@ -37,8 +37,8 @@ public class Task07c_APIEXTENSION {
                                             .destination(
                                                     ExtensionAWSLambdaDestinationBuilder.of()
                                                             .arn("arn:aws:lambda:us-east-1:073961568415:function:happy-garden-303-plant-check")
-                                                            .accessKey("AKIAI6NIXW7LRU56TYNA")
-                                                            .accessSecret("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")
+                                                            .accessKey("")
+                                                            .accessSecret("")
                                                             .build()
                                             )
                                             .triggers(
