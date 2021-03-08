@@ -164,7 +164,7 @@ public class Task09b_SPHERECLIENT_LOGGING {
                 ClientCredentials.of()
                         .withClientId(clientId)
                         .withClientSecret(clientSecret)
-                        .build(),Task07c_APIEXTENSION
+                        .build(),
                 ServiceRegion.GCP_EUROPE_WEST1.getOAuthTokenUrl(),
                 ServiceRegion.GCP_EUROPE_WEST1.getApiUrl(),
                 new ArrayList<>(Collections.singletonList(
